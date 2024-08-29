@@ -11,7 +11,7 @@ router.post('/login', async (req, res) => {
     const result = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
     const user = result.rows[0];
 
-    if (user && await (password=== user.password)) {
+    if (user && await bcrypt.compare(password, user.password)) {
       // In a real app, you would create and send a JWT token here
       res.json({ success: true, user: { id: user.id, name: user.name, email: user.email } });
     } else {
@@ -22,5 +22,6 @@ router.post('/login', async (req, res) => {
     res.status(500).json({ success: false, message: 'Internal server error' });
   }
 });
+
 
 export default router;
