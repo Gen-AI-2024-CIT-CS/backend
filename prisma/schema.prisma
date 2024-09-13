@@ -13,6 +13,7 @@ model User {
   email        String @unique
   viewpassword String
   password     String
+  role         String
 
   @@map("users") // Maps the Prisma model to the `users` table in the database
 }
