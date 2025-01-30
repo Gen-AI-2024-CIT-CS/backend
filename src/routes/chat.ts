@@ -1,30 +1,29 @@
 import express from 'express';
 import axios from 'axios';
-import { PrismaClient } from '@prisma/client';  // Import Prisma
+import { PrismaClient } from '@prisma/client';
 
 const router = express.Router();
-const prisma = new PrismaClient();  // Initialize Prisma Client
+const prisma = new PrismaClient();
 
-// Handle POST requests from the frontend to /api/chat
 router.post('/', async (req, res) => {
-  const userMessage = req.body.message;
+  const { message } = req.body;
+
+  if (!message) {
+    return res.status(400).json({ error: "Missing 'message' in request body" });
+  }
 
   try {
-    // Send the user message to Flask API to get the SQL query
-    const flaskResponse = await axios.post('http://localhost:5000/process_query', { message: userMessage });
-    const sqlQuery = flaskResponse.data.sql;  // Assuming Flask returns { sql: '...' }
+    const flaskResponse = await axios.post('http://localhost:5000/process_query', { query: message });
 
-    console.log('SQL Query from Flask:', sqlQuery);
+    if (!flaskResponse.data) {
+      return res.status(400).json({ error: "Invalid response from Flask API" });
+    }
 
-    // Execute the SQL query using Prisma
-    const result = await prisma.$queryRawUnsafe(sqlQuery);
+    console.log(flaskResponse.data);
 
-    console.log('Database query result:', result);
-
-    // Return the result back to the frontend
-    res.status(200).json({ data: result });
-  } catch (error) {
-    console.error('Error:', error);
+    res.status(200).json(flaskResponse.data);
+  } catch (error: any) {
+    console.error('Error:', error.response?.data || error.message);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
