@@ -7,7 +7,6 @@ assignmentsRouter.get('/', async (req, res) => {
     try {   
         const client = await pool.connect();        
         const result = await client.query('SELECT * FROM assignments JOIN student on assignments.email = student.email WHERE student.dept = $1', [req.query.dept]); 
-        console.log(result.rows);   
         res.json(result.rows);
         client.release();
     } catch (error) {
