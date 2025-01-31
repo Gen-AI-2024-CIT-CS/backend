@@ -29,8 +29,8 @@ uploadRouter.post("/", upload.single("file"), (req, res) => {
   }
 
   // Get the absolute path of the Python script
-const scriptPath = path.join(__dirname, "../scripts/insertAssignments.py"); // Adjust the path if needed
-  const command = process.platform === "win32" ? `py ${scriptPath}` : `python3 ${scriptPath}`;
+const scriptPath = path.join(__dirname, "../scripts/insertAssignments.py"); // Adjust the path if neededt
+  const command = process.platform === "win32" ? `py "${scriptPath}"` : `python3 "${scriptPath}"`;
 
   exec(command, (err, stdout, stderr) => {
     if (err) {

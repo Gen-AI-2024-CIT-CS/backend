@@ -1,5 +1,6 @@
 import csv
 import psycopg2
+from pathlib import Path
 
 conn = psycopg2.connect(
     dbname="nptel",
@@ -23,7 +24,10 @@ def is_valid_number(s):
 def clean_assignment_value(value):
     return float(value) if is_valid_number(value) else 0
 
-with open("src/scripts/mentee.csv", "r") as file:
+current_path = Path(__file__).parent
+file_path = current_path / "mentee.csv"
+
+with open(file_path, "r") as file:
     reader = csv.reader(file)
     headers = next(reader)
     d = {header: i for i, header in enumerate(headers)}

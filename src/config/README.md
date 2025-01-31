@@ -54,10 +54,6 @@ CREATE TABLE Students_enrolled(
 );
 
 -- Create Users Table
-CREATE TABLE Users(
-    email varchar(255), 
-    password varchar(255)
-);
 ```
 
 ### Step 3: Insert Data into the Student Table
@@ -99,3 +95,25 @@ Install psycopg2 if not already installed
 psycopg2
 ```
 Run insert students.py and ensure student.csv and the py file is in the same directory
+```sql
+-- Create Assignments Table
+CREATE TABLE public.assignments (
+    name VARCHAR(255),
+    email VARCHAR(255),
+    roll_no VARCHAR(255),
+    assignment0 NUMERIC(5,2),
+    assignment1 NUMERIC(5,2),
+    assignment2 NUMERIC(5,2),
+    assignment3 NUMERIC(5,2),
+    assignment4 NUMERIC(5,2),
+    assignment5 NUMERIC(5,2),
+    assignment6 NUMERIC(5,2),
+    assignment7 NUMERIC(5,2),
+    assignment8 NUMERIC(5,2),
+    assignment9 NUMERIC(5,2),
+    assignment10 NUMERIC(5,2),
+    assignment11 NUMERIC(5,2),
+    assignment12 NUMERIC(5,2),
+    CONSTRAINT unique_email UNIQUE (email)
+);
+```
