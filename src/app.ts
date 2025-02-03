@@ -5,7 +5,8 @@ import authRoutes from './routes/auth';
 import chatRoutes from './routes/chat'; // Import the chat route handler
 import assignmentsRouter from './routes/assignments';
 import studentsRouter from './routes/students';
-import uploadRouter from './routes/upload';
+import assignmentUploadRouter from './routes/uploadAssignments';
+import studentUploadRouter from './routes/uploadStudents';
 import cookieParser from 'cookie-parser';
 
 const app = express();
@@ -24,7 +25,8 @@ app.use('/api/auth', authRoutes);
 app.use('/api/assignments',assignmentsRouter)
 app.use('/api/students',studentsRouter)
 app.use('/api/auth', authRoutes);
-app.use('/api/upload', uploadRouter);
+app.use('/api/uploadAssignments', assignmentUploadRouter);
+app.use('/api/uploadStudents', studentUploadRouter);
 
 // Add chatbot route
 app.use('/api/chat', chatRoutes);  // Adding the chat route

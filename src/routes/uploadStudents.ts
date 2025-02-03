@@ -4,7 +4,7 @@ import path from "path";
 import fs from "fs";
 import { exec } from "child_process";
 
-const uploadRouter = express.Router();
+const studentUploadRouter = express.Router();
 
 // Ensure the "uploads" directory exists
 const uploadDir = path.join(__dirname, "../scripts");
@@ -16,20 +16,20 @@ if (!fs.existsSync(uploadDir)) {
 const storage = multer.diskStorage({
   destination: uploadDir,
   filename: (req, file, cb) => {
-    cb(null, "mentee.csv"); // Save as mentee.csv
+    cb(null, "students.csv"); // Save as mentee.csv
   },
 });
 
 const upload = multer({ storage });
 
 // API endpoint for file upload
-uploadRouter.post("/", upload.single("file"), (req, res) => {
+studentUploadRouter.post("/", upload.single("file"), (req, res) => {
   if (!req.file) {
     return res.status(400).json({ message: "No file uploaded." });
   }
 
   // Get the absolute path of the Python script
-const scriptPath = path.join(__dirname, "../scripts/insertAssignments.py"); // Adjust the path if neededt
+const scriptPath = path.join(__dirname, "../scripts/insertStudents.py"); // Adjust the path if neededt
   const command = process.platform === "win32" ? `py "${scriptPath}"` : `python3 "${scriptPath}"`;
 
   exec(command, (err, stdout, stderr) => {
@@ -45,7 +45,7 @@ const scriptPath = path.join(__dirname, "../scripts/insertAssignments.py"); // A
       console.error("Script error:", stdout);
       return res.status(500).json({ message: "Script error." });
     }else{
-        fs.unlink(path.join(uploadDir, "mentee.csv"), (err) => {
+        fs.unlink(path.join(uploadDir, "students.csv"), (err) => {
             if (err) {
                 console.error("Error deleting file:", err.message);
             } else {
@@ -57,4 +57,4 @@ const scriptPath = path.join(__dirname, "../scripts/insertAssignments.py"); // A
   });
 });
 
-export default uploadRouter;
+export default studentUploadRouter;

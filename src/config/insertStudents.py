@@ -1,14 +1,15 @@
 import csv
 import psycopg2
 import re
+import os
 
 # Connect to your PostgreSQL database
 conn = psycopg2.connect(
-    dbname="nptel",
-    user="postgres",
-    password="YOUR PASSWORD HERE",
-    host="localhost",  # or your db host
-    port="5432"
+    dbname=os.getenv("DB_NAME"),
+    user=os.getenv("DB_USER"),
+    password=os.getenv("DB_PASSWORD"),
+    host=os.getenv("DB_HOST"),
+    port=os.getenv("DB_PORT")
 )
 cursor = conn.cursor()
 valid_depts =  ['AD','AM','CZ','CS',
