@@ -5,15 +5,18 @@ const studentsRouter = express.Router();
 
 studentsRouter.get('/', async (req, res) => {
     try {   
-        const client = await pool.connect();        
-        const result = await client.query(
-            `SELECT s.email, ce.course_id, ce.status, s.dept 
+        const client = await pool.connect();
+        var query = `SELECT s.email, ce.course_id, ce.status, s.dept 
             FROM courses_enrolled ce 
-            JOIN student s ON s.email = ce.email 
-            WHERE s.dept = $1`, 
-            [req.query.dept]  // Pass the department as a parameter
-        );
-        res.json(result.rows);
+            JOIN student s ON s.email = ce.email`;        
+        if(req.query.dept){
+            query += ' WHERE s.dept = $1';
+            const result = await client.query(query, [req.query.dept]);
+            res.json(result.rows);
+        }else{
+            const result = await client.query(query);
+            res.json(result.rows);
+        }
         client.release();
     } catch (error) {
         console.error('Error executing SQL query:', error);
