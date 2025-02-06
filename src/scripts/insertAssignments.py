@@ -1,7 +1,15 @@
 import csv
 import psycopg2
 from pathlib import Path
+import sys
 import os
+
+if len(sys.argv) < 2:
+    print("Error: User role argument missing")
+    sys.exit(1)
+
+userName = sys.argv[1]
+print("Received Name Argument:", sys.argv[1])
 
 conn = psycopg2.connect(
     dbname=os.getenv("DB_NAME"),
@@ -54,6 +62,15 @@ with open(file_path, "r") as file:
         placeholders = ', '.join(['%s'] * (3 + num_assignments))
         columns = ', '.join(['name', 'email', 'roll_no'] + [f'assignment{i}' for i in range(num_assignments)])
         
+        menteePlaceholders = ', '.join(['%s'] * 4)
+        menteeColumns = ', '.join(['name', 'email', 'roll_no', 'mentor_name'])
+        
+        menteeQuery = f"""
+        INSERT INTO mentee ({menteeColumns})
+        VALUES ({menteePlaceholders})
+        ON CONFLICT (email) DO NOTHING
+        """
+
         query = f"""
         INSERT INTO assignments (courseID, {columns})
         VALUES (%s, {placeholders})
@@ -64,6 +81,7 @@ with open(file_path, "r") as file:
         try:
             # print("Executing query:", cursor.mogrify(query, tuple(data)).decode())  # This will show the actual query with values
             cursor.execute(query, tuple(data))
+            cursor.execute(menteeQuery, tuple(data[:3] + [userName]))
         except Exception as e:
             print(f"Error: {e}")
             print(f"Failed data: {data}")
