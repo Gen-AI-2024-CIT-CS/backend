@@ -9,7 +9,8 @@ if len(sys.argv) < 2:
     sys.exit(1)
 
 userName = sys.argv[1]
-print("Received Name Argument:", sys.argv[1])
+courseID = sys.argv[2]
+print("Received Name Argument:", sys.argv[1] , sys.argv[2])
 
 conn = psycopg2.connect(
     dbname=os.getenv("DB_NAME"),
@@ -42,8 +43,7 @@ with open(file_path, "r") as file:
     d = {header: i for i, header in enumerate(headers)}
     assignment_headers = get_assignment_headers(headers)
     num_assignments = len(assignment_headers)
-    courseID = "ns_noc24_cs94"
-
+    
     for row in reader:
         # Extend row with zeros if needed
         row.extend([0] * (3 + num_assignments - len(row)))

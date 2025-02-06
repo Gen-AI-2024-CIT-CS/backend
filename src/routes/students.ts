@@ -9,7 +9,6 @@ studentsRouter.get('/', async (req, res) => {
         var query = `SELECT s.email, ce.course_id, ce.status, s.dept 
             FROM courses_enrolled ce 
             JOIN student s ON s.email = ce.email`;     
-        console.log("hi");   
         if(req.query.dept){
             query += ' WHERE s.dept = $1';
             const result = await client.query(query, [req.query.dept]);

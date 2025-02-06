@@ -34,7 +34,6 @@ assignmentUploadRouter.post("/", upload.single("file"), async (req, res) => {
     return res.status(400).json({ message: "No file uploaded." });
   }
   const token = req.cookies["jwt_token"];
-  console.log("token", token);
   if(!token){
     return res.status(400).json({ message: "Token not provided." });
   }
@@ -56,12 +55,14 @@ assignmentUploadRouter.post("/", upload.single("file"), async (req, res) => {
     }
 
   const userName = user.name;
+  const courseID = req.headers["courseid"] as string;
+  console.log(req.headers["courseid"]);
 
   // Get the absolute path of the Python script
   const scriptPath = path.join(__dirname, "../scripts/insertAssignments.py"); // Adjust the path if neededt
   const command = process.platform === "win32" 
-  ? `py "${scriptPath}" "${userName}"` 
-  : `python3 "${scriptPath}" "${userName}"`;
+  ? `py "${scriptPath}" "${userName}" "${courseID}"` 
+  : `python3 "${scriptPath}" "${userName}" "${courseID}"`;
 
   exec(command, (err, stdout, stderr) => {
     if (err) {
