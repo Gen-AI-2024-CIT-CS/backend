@@ -7,6 +7,7 @@ import assignmentsRouter from './routes/assignments';
 import studentsRouter from './routes/students';
 import assignmentUploadRouter from './routes/uploadAssignments';
 import studentUploadRouter from './routes/uploadStudents';
+import coursesEnrolledRouter from './routes/uploadCoursesEnrolled';
 import cookieParser from 'cookie-parser';
 
 const app = express();
@@ -27,6 +28,7 @@ app.use('/api/students',studentsRouter)
 app.use('/api/auth', authRoutes);
 app.use('/api/uploadAssignments', assignmentUploadRouter);
 app.use('/api/uploadStudents', studentUploadRouter);
+app.use('/api/uploadCoursesEnrolled', coursesEnrolledRouter);
 
 // Add chatbot route
 app.use('/api/chat', chatRoutes);  // Adding the chat route
