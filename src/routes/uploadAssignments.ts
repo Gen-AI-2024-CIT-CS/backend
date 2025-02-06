@@ -3,6 +3,12 @@ import multer from "multer";
 import path from "path";
 import fs from "fs";
 import { exec } from "child_process";
+import { PrismaClient } from "@prisma/client";
+import dotenv from "dotenv";
+import jwt from "jsonwebtoken";
+
+dotenv.config();
+const prisma = new PrismaClient();
 
 const assignmentUploadRouter = express.Router();
 
@@ -23,14 +29,39 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 // API endpoint for file upload
-assignmentUploadRouter.post("/", upload.single("file"), (req, res) => {
+assignmentUploadRouter.post("/", upload.single("file"), async (req, res) => {
   if (!req.file) {
     return res.status(400).json({ message: "No file uploaded." });
   }
+  const token = req.cookies["jwt_token"];
+  console.log("token", token);
+  if(!token){
+    return res.status(400).json({ message: "Token not provided." });
+  }
+  try {
+    // Decode JWT token
+    const decoded = jwt.verify(token as string, process.env.JWT_SECRET as string) as unknown as { email: string };
+    if (!decoded.email) {
+      return res.status(401).json({ message: "Invalid token." });
+    }
+
+    // Fetch user from the database using Prisma
+    const user = await prisma.user.findUnique({
+      where: { email: decoded.email },
+      select: { name: true },
+    });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
+    }
+
+  const userName = user.name;
 
   // Get the absolute path of the Python script
-const scriptPath = path.join(__dirname, "../scripts/insertAssignments.py"); // Adjust the path if neededt
-  const command = process.platform === "win32" ? `py "${scriptPath}"` : `python3 "${scriptPath}"`;
+  const scriptPath = path.join(__dirname, "../scripts/insertAssignments.py"); // Adjust the path if neededt
+  const command = process.platform === "win32" 
+  ? `py "${scriptPath}" "${userName}"` 
+  : `python3 "${scriptPath}" "${userName}"`;
 
   exec(command, (err, stdout, stderr) => {
     if (err) {
@@ -55,6 +86,10 @@ const scriptPath = path.join(__dirname, "../scripts/insertAssignments.py"); // A
         res.status(200).json({ message: "File uploaded and processed successfully!" });
     }
   });
+  } catch (err) {
+    console.error("JWT Verification Error:", err);
+    return res.status(500).json({ message: "Invalid Token" });
+  }
 });
 
 export default assignmentUploadRouter;
