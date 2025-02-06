@@ -34,6 +34,7 @@ with open(file_path, "r") as file:
     d = {header: i for i, header in enumerate(headers)}
     assignment_headers = get_assignment_headers(headers)
     num_assignments = len(assignment_headers)
+    courseID = "ns_noc24_cs94"
 
     for row in reader:
         # Extend row with zeros if needed
@@ -54,15 +55,18 @@ with open(file_path, "r") as file:
         columns = ', '.join(['name', 'email', 'roll_no'] + [f'assignment{i}' for i in range(num_assignments)])
         
         query = f"""
-        INSERT INTO assignments ({columns})
-        VALUES ({placeholders})
-        ON CONFLICT (email) DO NOTHING
+        INSERT INTO assignments (courseID, {columns})
+        VALUES (%s, {placeholders})
+        ON CONFLICT (courseID,email) DO UPDATE SET
+        {', '.join([f'assignment{i} = EXCLUDED.assignment{i}' for i in range(num_assignments)])}
         """
-        
+        data.insert(0, courseID)
         try:
+            # print("Executing query:", cursor.mogrify(query, tuple(data)).decode())  # This will show the actual query with values
             cursor.execute(query, tuple(data))
         except Exception as e:
             print(f"Error: {e}")
+            print(f"Failed data: {data}")
 
 conn.commit()
 cursor.close()

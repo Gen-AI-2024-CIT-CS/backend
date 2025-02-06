@@ -52,6 +52,7 @@ const scriptPath = path.join(__dirname, "../scripts/insertAssignments.py"); // A
                 console.log("File deleted successfully.");
             }
         });
+        console.log(stdout);
         res.status(200).json({ message: "File uploaded and processed successfully!" });
     }
   });
