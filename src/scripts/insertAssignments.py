@@ -81,7 +81,7 @@ with open(file_path, "r") as file:
         try:
             # print("Executing query:", cursor.mogrify(query, tuple(data)).decode())  # This will show the actual query with values
             cursor.execute(query, tuple(data))
-            cursor.execute(menteeQuery, tuple(data[:3] + [userName]))
+            cursor.execute(menteeQuery, tuple(data[1:4] + [userName]))
         except Exception as e:
             print(f"Error: {e}")
             print(f"Failed data: {data}")
