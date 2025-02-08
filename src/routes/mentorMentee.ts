@@ -10,7 +10,6 @@ const mentormenteeRouter = express.Router();
 
 mentormenteeRouter.get('/', async (req, res) => {
     try {
-        // Retrieve JWT token from cookies
         const token = req.cookies["jwt_token"];
         console.log("Token received:", token);
 
@@ -18,7 +17,6 @@ mentormenteeRouter.get('/', async (req, res) => {
             return res.status(400).json({ message: "Token not provided." });
         }
 
-        // Decode and verify token
         const decoded = jwt.verify(token as string, process.env.JWT_SECRET as string) as { email: string, role: string };
         let role = decoded.role;
         let userName = '';
@@ -42,21 +40,30 @@ mentormenteeRouter.get('/', async (req, res) => {
             return res.status(401).json({ message: "Invalid role in token." });
         }
 
-        // Fetch mentee data from PostgreSQL
         console.log("Connecting to PostgreSQL...");
         const client = await pool.connect();
 
         let queryResult;
         if (role === 'admin') {
             console.log("Fetching all mentees for admin...");
-            queryResult = await client.query('SELECT * FROM mentee');
+            // I have used distinct select which may affect when there are multiple courses enrolled by a mentee
+            queryResult = await client.query(`
+                SELECT DISTINCT m.*
+                FROM mentee m
+                JOIN courses_enrolled ce ON m.email = ce.email
+            `);
         } else if (role === 'user') {
             console.log(`Fetching mentees for mentor: ${userName}`);
-            queryResult = await client.query('SELECT * FROM mentee WHERE mentor_name = $1', [userName]);
+            queryResult = await client.query(`
+                SELECT DISTINCT m.*
+                FROM mentee m
+                JOIN courses_enrolled ce ON m.email = ce.email
+                WHERE m.mentor_name = $1
+            `, [userName]);
         }
 
         client.release();
-        
+
         if (!queryResult || queryResult.rows.length === 0) {
             console.log("No mentees found.");
             return res.status(404).json({ message: "No mentees found." });
@@ -70,5 +77,6 @@ mentormenteeRouter.get('/', async (req, res) => {
         return res.status(500).json({ error: 'Internal Server Error' });
     }
 });
+
 
 export default mentormenteeRouter;
