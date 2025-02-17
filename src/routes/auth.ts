@@ -1,6 +1,5 @@
 import express from 'express';
 import bcrypt from 'bcrypt';
-import { SignJWT } from 'jose';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import { PrismaClient } from '@prisma/client';
@@ -24,11 +23,8 @@ router.post('/login', async (req, res) => {
     });
 
     if (user && await bcrypt.compare(password, user.password)) {
-      const secret = new TextEncoder().encode(process.env.JWT_SECRET);
-      const token = await new SignJWT({ email: user.email, role: user.role })
-        .setProtectedHeader({ alg: 'HS256' })
-        .setExpirationTime('60m')
-        .sign(secret);
+
+      const token = jwt.sign({ email: user.email, role: user.role }, process.env.JWT_SECRET as string, { expiresIn: '1h' });
 
       res.cookie('jwt_token', token, { httpOnly: true, maxAge: 60*60*1000 });
       res.send({ success: true, message: 'Logged in successfully', role: user.role });
