@@ -15,19 +15,19 @@ import cookieParser from 'cookie-parser';
 const app = express();
 
 app.use(cookieParser());
-app.use(cors({
-  credentials: true,
-  origin: process.env.FRONTEND_URL || 'http://localhost:3000'
-}));
 
 app.use(express.json());
+
+app.use(cors({
+  credentials: true,
+  origin: process.env.FRONTEND_URL || 'http://localhost:3002'
+}));
 
 // Add user and auth routes
 app.use('/api/users', userRoutes);
 app.use('/api/auth', authRoutes); 
 app.use('/api/assignments',assignmentsRouter)
 app.use('/api/students',studentsRouter)
-app.use('/api/auth', authRoutes);
 app.use('/api/uploadAssignments', assignmentUploadRouter);
 app.use('/api/uploadStudents', studentUploadRouter);
 app.use('/api/uploadCoursesEnrolled', coursesEnrolledRouter);
