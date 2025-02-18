@@ -4,7 +4,8 @@ import userRoutes from './routes/users';
 import authRoutes from './routes/auth';
 import chatRoutes from './routes/chat'; // Import the chat route handler
 import assignmentsRouter from './routes/assignments';
-import studentsRouter from './routes/students';
+import enrolledRouter from './routes/enrolled';
+import studentRouter from './routes/student';
 import assignmentUploadRouter from './routes/uploadAssignments';
 import studentUploadRouter from './routes/uploadStudents';
 import coursesEnrolledRouter from './routes/uploadCoursesEnrolled';
@@ -29,7 +30,7 @@ app.use(cors({
 app.use('/api/users', userRoutes);
 app.use('/api/auth', authRoutes); 
 app.use('/api/assignments',assignmentsRouter)
-app.use('/api/students',studentsRouter)
+app.use('/api/enrolled',enrolledRouter)
 app.use('/api/uploadAssignments', assignmentUploadRouter);
 app.use('/api/uploadStudents', studentUploadRouter);
 app.use('/api/uploadCoursesEnrolled', coursesEnrolledRouter);
@@ -37,6 +38,7 @@ app.use('/api/mentormentee', mentormenteeRouter)
 app.use('/api/menteeAssignment', menteeAssignment)
 app.use('/api/courses',coursesRouter);
 app.use('/api/mentors', mentorRouter);
+app.use('/api/students', studentRouter);
 // Add chatbot route
 app.use('/api/chat', chatRoutes);  // Adding the chat route
 
