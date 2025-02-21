@@ -14,6 +14,7 @@ import menteeAssignment from './routes/menteeAssignment';
 import coursesRouter from './routes/fetchCourses';
 import cookieParser from 'cookie-parser';
 import mentorRouter from './routes/mentorRouter';
+import coursesDisplayRouter from './routes/coursesEnrolled';
 
 const app = express();
 
@@ -39,6 +40,7 @@ app.use('/api/menteeAssignment', menteeAssignment)
 app.use('/api/courses',coursesRouter);
 app.use('/api/mentors', mentorRouter);
 app.use('/api/students', studentRouter);
+app.use('/api/coursesDisplayRouter', coursesDisplayRouter)
 // Add chatbot route
 app.use('/api/chat', chatRoutes);  // Adding the chat route
 
