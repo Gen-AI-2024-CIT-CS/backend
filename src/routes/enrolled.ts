@@ -1,9 +1,9 @@
 import express from 'express';
 import pool from '../config/db';
 
-const studentsRouter = express.Router();
+const enrolledRouter = express.Router();
 
-studentsRouter.get('/', async (req, res) => {
+enrolledRouter.get('/', async (req, res) => {
     try {   
         const client = await pool.connect();
         var query = `SELECT s.email, ce.course_id, ce.status, s.dept 
@@ -24,4 +24,4 @@ studentsRouter.get('/', async (req, res) => {
     }
 });
 
-export default studentsRouter;
+export default enrolledRouter;

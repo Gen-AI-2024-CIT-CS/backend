@@ -4,13 +4,13 @@ from pathlib import Path
 import sys
 import os
 
-if len(sys.argv) < 2:
+if len(sys.argv) < 3:
     print("Error: User role argument missing")
     sys.exit(1)
 
 userName = sys.argv[1]
 courseID = sys.argv[2]
-print("Received Name Argument:", sys.argv[1] , sys.argv[2])
+print("Received Name Argument:", userName, courseID)
 
 conn = psycopg2.connect(
     dbname=os.getenv("DB_NAME"),
@@ -22,7 +22,10 @@ conn = psycopg2.connect(
 cursor = conn.cursor()
 
 def get_assignment_headers(headers):
-    return [h for h in headers if h.startswith("Week") and "Assignment" in h]
+    assignments = [h for h in headers if h.startswith("Week") and "Assignment" in h]
+    if "Week 0 : Assignment 0" not in assignments:
+        assignments.insert(0, "Week 0 : Assignment 0")  # Ensure "Week 0" is the first assignment
+    return assignments
 
 def is_valid_number(s):
     try:
@@ -32,7 +35,12 @@ def is_valid_number(s):
         return False
 
 def clean_assignment_value(value):
-    return float(value) if is_valid_number(value) else 0
+    if is_valid_number(value):
+        return float(value)
+    elif value.lower() == 'submitted':
+        return -1
+    else:
+        return 0
 
 current_path = Path(__file__).parent
 file_path = current_path / "mentee.csv"
@@ -45,10 +53,8 @@ with open(file_path, "r") as file:
     num_assignments = len(assignment_headers)
     
     for row in reader:
-        # Extend row with zeros if needed
-        row.extend([0] * (3 + num_assignments - len(row)))
-         
-        # Prepare data for insertion
+        row.extend([0] * (3 + num_assignments - len(row)))  # Extend row to ensure no missing values
+        
         data = [
             row[d["Name"]],
             row[d["Email"]],
@@ -56,9 +62,13 @@ with open(file_path, "r") as file:
         ]
         
         for header in assignment_headers:
-            value = row[d[header]] if d[header] < len(row) else '0'
+            if header in d and d[header] < len(row):
+                value = row[d[header]]
+            else:
+                value = '0'  # Default for missing Week 0
+            
             data.append(clean_assignment_value(value))
-       
+        
         placeholders = ', '.join(['%s'] * (3 + num_assignments))
         columns = ', '.join(['name', 'email', 'roll_no'] + [f'assignment{i}' for i in range(num_assignments)])
         
@@ -79,7 +89,6 @@ with open(file_path, "r") as file:
         """
         data.insert(0, courseID)
         try:
-            # print("Executing query:", cursor.mogrify(query, tuple(data)).decode())  # This will show the actual query with values
             cursor.execute(query, tuple(data))
             cursor.execute(menteeQuery, tuple(data[1:4] + [userName]))
         except Exception as e:

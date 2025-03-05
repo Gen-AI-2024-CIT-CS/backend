@@ -52,6 +52,7 @@ const scriptPath = path.join(__dirname, "../scripts/insertStudents.py"); // Adju
                 console.log("File deleted successfully.");
             }
         });
+        console.log("Script stdout:", stdout);
         res.status(200).json({ message: "File uploaded and processed successfully!" });
     }
   });
