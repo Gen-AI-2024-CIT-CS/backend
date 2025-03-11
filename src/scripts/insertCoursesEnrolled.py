@@ -44,7 +44,7 @@ try:
             insert_query = """
             INSERT INTO courses_enrolled (course_id, course_name, email, status, choice1_state, choice1_city)
             VALUES (%s, %s, %s, %s, %s, %s)
-            ON CONFLICT (email) 
+            ON CONFLICT (course_id, email) 
             DO UPDATE SET 
                 status = COALESCE(EXCLUDED.status, courses_enrolled.status),
                 choice1_state = COALESCE(EXCLUDED.choice1_state, courses_enrolled.choice1_state),
