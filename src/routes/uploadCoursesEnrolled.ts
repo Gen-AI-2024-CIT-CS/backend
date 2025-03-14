@@ -53,6 +53,7 @@ const scriptPath = path.join(__dirname, "../scripts/insertCoursesEnrolled.py"); 
             }
         });
         res.status(200).json({ message: "File uploaded and processed successfully!" });
+        console.log(stdout);
     }
   });
 });
