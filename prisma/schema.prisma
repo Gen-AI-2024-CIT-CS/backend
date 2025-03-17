@@ -1,19 +1,83 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
-generator client {
-  provider = "prisma-client-js"
-}
-
 model User {
   id           Int    @id @default(autoincrement())
-  name         String
-  email        String @unique
-  viewpassword String
+  name         String @db.VarChar(255)
+  email        String @unique @db.VarChar(255)
+  viewpassword String @db.VarChar(255)
   password     String
-  role         String
+  role         String @db.VarChar(50)
 
-  @@map("users") // Maps the Prisma model to the `users` table in the database
+  @@map("users")
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model assignments {
+  courseid     String?   @db.VarChar(255)
+  name         String?   @db.VarChar(255)
+  email        String?   @db.VarChar(255)
+  roll_no      String?   @db.VarChar(255)
+  assignment0  Decimal?  @db.Decimal(5, 2)
+  assignment1  Decimal?  @db.Decimal(5, 2)
+  assignment2  Decimal?  @db.Decimal(5, 2)
+  assignment3  Decimal?  @db.Decimal(5, 2)
+  assignment4  Decimal?  @db.Decimal(5, 2)
+  assignment5  Decimal?  @db.Decimal(5, 2)
+  assignment6  Decimal?  @db.Decimal(5, 2)
+  assignment7  Decimal?  @db.Decimal(5, 2)
+  assignment8  Decimal?  @db.Decimal(5, 2)
+  assignment9  Decimal?  @db.Decimal(5, 2)
+  assignment10 Decimal?  @db.Decimal(5, 2)
+  assignment11 Decimal?  @db.Decimal(5, 2)
+  assignment12 Decimal?  @db.Decimal(5, 2)
+  created_at   DateTime? @default(now()) @db.Timestamp(6)
+
+  @@unique([email, courseid], map: "unique_email_courseid")
+  @@ignore
+}
+
+model course {
+  course_name String @unique(map: "unique_course_name") @db.VarChar(255)
+  course_id   String @id @db.VarChar(50)
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model courses_enrolled {
+  course_id     String? @db.VarChar(50)
+  course_name   String? @db.VarChar(255)
+  email         String? @db.VarChar(255)
+  status        String? @db.VarChar(255)
+  choice1_state String? @db.VarChar(50)
+  choice1_city  String? @db.VarChar(50)
+  start_month   Int?
+  end_month     Int?
+  year          Int?
+  semester      String? @db.VarChar(10)
+
+  @@unique([email, course_id], map: "unique_email_course")
+  @@ignore
+}
+
+model mentee {
+  name        String @db.VarChar(255)
+  email       String @unique @db.VarChar(255)
+  roll_no     String @db.VarChar(50)
+  mentor_name String @db.VarChar(50)
+}
+
+model student {
+  name    String? @db.VarChar(255)
+  email   String  @id @db.VarChar(255)
+  roll_no String? @db.VarChar(255)
+  gender  String? @db.VarChar(50)
+  role    String? @db.VarChar(50)
+  dept    String? @db.VarChar(255)
+  year    Int?
 }
