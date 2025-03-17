@@ -15,6 +15,7 @@ import coursesRouter from './routes/fetchCourses';
 import cookieParser from 'cookie-parser';
 import mentorRouter from './routes/mentorRouter';
 import coursesDisplayRouter from './routes/coursesEnrolled';
+import newChatBot from './routes/newChatBot';
 
 const app = express();
 
@@ -43,6 +44,7 @@ app.use('/api/students', studentRouter);
 app.use('/api/coursesDisplayRouter', coursesDisplayRouter)
 // Add chatbot route
 app.use('/api/chat', chatRoutes);  // Adding the chat route
+app.use('/api/newChatBot', newChatBot);  // Adding the chat route
 
 const PORT = process.env.PORT;
 
