@@ -6,7 +6,7 @@ const enrolledRouter = express.Router();
 enrolledRouter.get('/', async (req, res) => {
     try {   
         const client = await pool.connect();
-        var query = `SELECT s.email, ce.course_id, ce.status, s.dept 
+        var query = `SELECT s.email, ce.course_id, ce.status, s.dept , s.year
             FROM courses_enrolled ce 
             JOIN student s ON s.email = ce.email`;     
         if(req.query.dept){
