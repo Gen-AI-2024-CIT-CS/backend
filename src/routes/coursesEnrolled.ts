@@ -30,6 +30,11 @@ coursesDisplayRouter.get('/course-counts', async (req, res) => {
             conditions.push(`ce.course_id = $${queryParams.length}`);
         }
         
+        if(req.query.year){
+            queryParams.push(req.query.year as string);
+            conditions.push(`s.year = $${queryParams.length}`);
+        }
+
         // Add WHERE clause if conditions exist
         if (conditions.length > 0) {
             query += ` WHERE ${conditions.join(' AND ')}`;

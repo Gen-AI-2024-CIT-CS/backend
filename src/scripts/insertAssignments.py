@@ -65,7 +65,8 @@ with open(file_path, "r") as file:
             if header in d and d[header] < len(row):
                 value = row[d[header]]
             else:
-                value = '0'  # Default for missing Week 0
+                value = '0'  # Default for missing Week 0\
+            
             
             data.append(clean_assignment_value(value))
         
