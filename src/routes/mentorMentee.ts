@@ -51,6 +51,7 @@ mentormenteeRouter.get('/', async (req, res) => {
                 SELECT DISTINCT m.*
                 FROM mentee m
                 JOIN courses_enrolled ce ON m.email = ce.email
+                JOIN student ON m.email = student.email
             `);
         } else if (role === 'user') {
             console.log(`Fetching mentees for mentor: ${userName}`);
@@ -58,6 +59,7 @@ mentormenteeRouter.get('/', async (req, res) => {
                 SELECT DISTINCT m.*
                 FROM mentee m
                 JOIN courses_enrolled ce ON m.email = ce.email
+                JOIN student ON m.email = student.email
                 WHERE m.mentor_name = $1
             `, [userName]);
         }

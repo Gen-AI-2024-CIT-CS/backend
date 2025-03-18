@@ -77,13 +77,13 @@ with open(file_path, "r", encoding='utf-8-sig') as file:
         placeholders = ', '.join(['%s'] * (3 + num_assignments))
         columns = ', '.join(['name', 'email', 'roll_no'] + [f'assignment{i}' for i in range(num_assignments)])
         
-        menteePlaceholders = ', '.join(['%s'] * 4)
-        menteeColumns = ', '.join(['name', 'email', 'roll_no', 'mentor_name'])
+        menteePlaceholders = ', '.join(['%s'] * 5)  # name, email, roll_no, mentor_name, courseID
+        menteeColumns = ', '.join(['name', 'email', 'roll_no', 'mentor_name', 'course_id'])
         
         menteeQuery = f"""
         INSERT INTO mentee ({menteeColumns})
         VALUES ({menteePlaceholders})
-        ON CONFLICT (email) DO NOTHING
+        ON CONFLICT (email, course_id) DO NOTHING
         """
 
         query = f"""
@@ -94,7 +94,7 @@ with open(file_path, "r", encoding='utf-8-sig') as file:
         """
         try:
             cursor.execute(query, tuple(data))
-            cursor.execute(menteeQuery, tuple(data[1:4] + [userName]))
+            cursor.execute(menteeQuery, tuple(data[1:4] + [userName] + [data[0]]))  # Use data[0] for Course ID
         except Exception as e:
             print(f"Error: {e}")
             print(f"Failed data: {data}")

@@ -38,7 +38,7 @@ menteeAssignment.get('/', async (req: Request, res: Response) => {
             queryResult = await client.query(`
                 SELECT assignments.*, courses_enrolled.course_id, student.dept 
                 FROM assignments 
-                JOIN courses_enrolled ON assignments.email = courses_enrolled.email
+                JOIN courses_enrolled ON assignments.email = courses_enrolled.email and assignments.courseid = courses_enrolled.course_id
                 JOIN student ON assignments.email = student.email
 
             `);

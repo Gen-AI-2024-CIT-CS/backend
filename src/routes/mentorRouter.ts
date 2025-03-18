@@ -31,7 +31,6 @@ mentorRouter.get('/', async (req, res) => {
             queryResult = await client.query(`
                 SELECT DISTINCT m.mentor_name as name
                 FROM mentee m
-                JOIN courses_enrolled ce ON m.email = ce.email
                 WHERE m.mentor_name IS NOT NULL
                 ORDER BY m.mentor_name
             `);
@@ -49,7 +48,6 @@ mentorRouter.get('/', async (req, res) => {
             queryResult = await client.query(`
                 SELECT DISTINCT m.mentor_name as name
                 FROM mentee m
-                JOIN courses_enrolled ce ON m.email = ce.email
                 WHERE m.mentor_name = $1
                 ORDER BY m.mentor_name
             `, [userName]);
